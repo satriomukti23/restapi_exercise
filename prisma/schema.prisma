@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Anggota {
+  id String @id @default(uuid())
+  nama String
+  alamat String
+  no_telepon String
+  peminjaman Peminjaman[]
+  }
+
+model Buku {
+  id String @id @default (uuid())
+  judul String
+  penulis String
+  penerbit String
+  tahun_terbit Int
+  no_rak String
+  peminjaman Peminjaman[]
+}
+
+model Peminjaman {
+  id String @id @default(uuid())
+  anggotaId String @unique
+  bukuId String @unique
+  tanggal_pinjam DateTime
+  tanggal_kembali DateTime
+  denda Denda[]
+  anggota Anggota @relation(fields: [anggotaId], references: [id])
+  buku Buku @relation(fields: [bukuId], references: [id])
+}
+
+model Denda {
+  id String @id @default(uuid())
+  peminjamanId String @unique
+  jumlah_denda Int
+  peminjaman Peminjaman @relation(fields: [peminjamanId], references: [id])
+}
